@@ -81,7 +81,7 @@ if aportes and periodo_anos and taxa_juros_ano:
 
     st.markdown(f"> Em {periodo_anos} anos você terá **R\$ {portfolio_final:.2f}**.")
     st.write(f"Deste valor, saíram do seu bolso como investimento apenas R\$ {total_em_aportes:.2f}.")
-    st.write(f"R\$ {total_em_juros} foi o que você teve de rendimento com os juros do investimento.")
+    st.write(f"\n\nR\$ {total_em_juros} foi o que você teve de rendimento com os juros do investimento.")
     
     st.markdown(f"""
     **As configurações utilizadas para gerar esses valores foram:**

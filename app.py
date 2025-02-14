@@ -101,5 +101,3 @@ adsense_code = """
 """
 
 st.components.v1.html(adsense_code)
-
-st.components.v1.html("""<meta name="google-site-verification" content="f-zKzbw_LXLsS4ySP7rVzmv8saqoIAXeyYHHauVFkpE" />""")

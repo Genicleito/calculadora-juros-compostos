@@ -73,10 +73,10 @@ install_requirements()
 # st.write(f"### Gráfico com visualização da série do ativo no TradingView")
 
 valor_inicial = st.number_input("Valor Inicial:")
-aportes = st.number_input("Aportes mensais:")
-taxa_juros_ano = st.number_input("Taxa de juros anual:")
-periodo_anos = int(st.number_input("Tempo de investimento (em anos):", format="%0.1f"))
-data_inicio = st.date_input("Data de início:", datetime.datetime.today())
+aportes = st.number_input("Aportes mensais:", value=None)
+taxa_juros_ano = st.number_input("Taxa de juros anual:", value=None)
+periodo_anos = int(st.number_input("Tempo de investimento (em anos):", format="%0.1f"), value=1)
+data_inicio = st.date_input("Data de início:", datetime.datetime.today(), value=None)
 
 st.write(f"{valor_inicial}, {aportes}, {taxa_juros_ano}, {periodo_anos}: {valor_inicial and aportes and taxa_juros_ano and periodo_anos}")
 if aportes and taxa_juros_ano and periodo_anos:

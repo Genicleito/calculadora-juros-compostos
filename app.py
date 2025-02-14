@@ -79,7 +79,7 @@ periodo_anos = st.number_input("Tempo de investimento (em anos):")
 data_inicio = st.date_input("Data de início:", datetime.datetime.today())
 
 st.write(f"{valor_inicial}, {aportes}, {taxa_juros_ano}, {periodo_anos}: {valor_inicial and aportes and taxa_juros_ano and periodo_anos}")
-if valor_inicial and aportes and taxa_juros_ano and periodo_anos:
+if aportes and taxa_juros_ano and periodo_anos:
     df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aportes, periodo_anos, data_inicio=data_inicio)
 
     st.markdown(f"## Resultado")

@@ -87,10 +87,8 @@ if aportes and periodo_anos and taxa_juros_ano:
     total_em_juros = portfolio_final - total_em_aportes
 
     st.write(f"> Em {periodo_anos} anos você terá **R\$ {portfolio_final:.2f}**.")
-
-    st.write("""Deste valor, saíram do seu bolso como investimento apenas R\$ {total_em_aportes:.2f} e R\$ {total_em_juros} foi o que você teve de rendimento com os juros.
-
-    As configurações utilizadas para gerar esses valores foram:
+    st.write(f"Deste valor, saíram do seu bolso como investimento apenas R\$ {total_em_aportes:.2f} e R\$ {total_em_juros} foi o que você teve de rendimento com os juros.")
+    st.write("""As configurações utilizadas para gerar esses valores foram:
     - Saldo inicial: R\$ {valor_inicial:.2f}
     - Aplicações mensais: R\$ {aportes:.2f}
     - Taxa de juros (ao ano): {taxa_juros_ano:.2f}%

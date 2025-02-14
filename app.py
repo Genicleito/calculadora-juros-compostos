@@ -92,7 +92,7 @@ if aportes and periodo_anos and taxa_juros_ano:
 
     st.markdown(f"---")
 
-    st.markdown(f"### Exibição dos resultados")
+    st.markdown(f"### Gráficos dos resultados")
 
     # st.markdown(f"\n> Gráfico de pizza")
     fig = px.pie(
@@ -103,7 +103,7 @@ if aportes and periodo_anos and taxa_juros_ano:
     )
     st.plotly_chart(fig, use_container_width=True)
 
-    st.markdown(f"\n> Tabela com os resultados mês a mês:")
+    st.markdown(f"\n### Tabela com os resultados mês a mês")
 
     st.dataframe(
         # df.round(2).style.format({'Valor investido': 'R$ {:.2f}', 'Valor resultado (com os juros)': 'R$ {:.2f}'}).sort_values("Mês"),

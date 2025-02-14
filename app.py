@@ -73,15 +73,15 @@ install_requirements()
 # st.write(f"### Gráfico com visualização da série do ativo no TradingView")
 
 valor_inicial = st.number_input("Valor Inicial:")
-aportes = st.number_input("Aportes mensais:", value=None)
-taxa_juros_ano = st.number_input("Taxa de juros anual:", value=None)
+aportes = st.number_input("Aportes mensais:")
+taxa_juros_ano = st.number_input("Taxa de juros anual:")
 periodo_anos = int(st.number_input("Tempo de investimento (em anos):", format="%0.1f"))
 data_inicio = st.date_input("Data de início:", datetime.datetime.today())
 
 st.write(f"{valor_inicial}, {aportes}, {taxa_juros_ano}, {periodo_anos}: {valor_inicial and aportes and taxa_juros_ano and periodo_anos}")
-if aportes and taxa_juros_ano and periodo_anos:
-    df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aportes, periodo_anos, data_inicio=data_inicio)
+# if aportes and taxa_juros_ano and periodo_anos:
+df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aportes, periodo_anos, data_inicio=data_inicio)
 
-    st.markdown(f"## Resultado")
+st.markdown(f"## Resultado")
 
-    st.dataframe(df.sort_values(mes, ascending=False), use_container_width=True, hide_index=True)
+st.dataframe(df.sort_values(mes, ascending=False), use_container_width=True, hide_index=True)

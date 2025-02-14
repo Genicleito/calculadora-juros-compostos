@@ -96,8 +96,8 @@ if aportes and periodo_anos and taxa_juros_ano:
     # st.markdown(f"\n> Gráfico de pizza")
     fig = px.pie(
         pd.DataFrame({'Valor': [total_em_aportes, total_em_juros], 'Distribuição': ['Valor investido', 'Total em juros']}),
-        values='x',
-        names='y',
+        values='Valor',
+        names='Distribuição',
         title='Distribuição dos valores aportados e rendimentos'
     )
     st.plotly_chart(fig, use_container_width=True)

@@ -80,14 +80,14 @@ taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=None) # , for
 if aportes and periodo_anos and taxa_juros_ano:
     df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano / 100, aportes, periodo_anos, data_inicio=data_inicio)
 
-st.markdown(f"## Resultado")
+    st.markdown(f"## Resultado")
 
-st.write(f"> Considerando a taxa de juros de {round(taxa_juros_ano / 100, 2)}%, em {periodo_anos} anos você terá R$ {str(df.sort_values("Mês")['Valor resultado (com os juros)'].iloc[-1])} sendo que saiu do seu bolso como investimento apenas R$ {str(df.sort_values("Mês")['Valor investido'].iloc[-1])}")
+    st.write(f"> Considerando a taxa de juros de {round(taxa_juros_ano / 100, 2)}%, em {periodo_anos} anos você terá R$ {df.sort_values("Mês")['Valor resultado (com os juros)'].iloc[-1]} sendo que saiu do seu bolso como investimento apenas R$ {df.sort_values("Mês")['Valor investido'].iloc[-1]}")
 
-st.dataframe(
-    df.style.format({'Valor investido': 'R$ {:,}', 'Valor resultado (com os juros)': 'R$ {:,}'}).sort_values("Mês"),
-    use_container_width=True,
-    hide_index=True
-)
+    st.dataframe(
+        df.style.format({'Valor investido': 'R$ {:,}', 'Valor resultado (com os juros)': 'R$ {:,}'}).sort_values("Mês"),
+        use_container_width=True,
+        hide_index=True
+    )
 
 # st.components.v1.html(adsense_code)

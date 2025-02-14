@@ -26,7 +26,7 @@ def calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aporte_mensal, pe
     for i in range(periodos_meses + 1):
         # Lista de meses considerando o período informado
         meses.append(
-            datetime.datetime.strptime(data_inicio.strftime('%Y-%m-01'), '%Y-%m-%d') + relativedelta(months=i)
+            (datetime.datetime.strptime(data_inicio.strftime('%Y-%m-01'), '%Y-%m-%d') + relativedelta(months=i)).date()
         )
         # Valores investidos (essa informação equivale à soma dos aportes feitos)
         valores_investidos.append(valor_inicial + (aporte_mensal * i)) # valor_anterior + aporte_mensal

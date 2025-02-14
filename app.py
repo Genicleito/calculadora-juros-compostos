@@ -84,10 +84,10 @@ if aportes and periodo_anos and taxa_juros_ano:
     st.markdown(f"""
     **As configurações utilizadas para gerar esses valores foram:**
 
-    Saldo inicial: \t\tR$ {valor_inicial:.2f}
-    Aplicações mensais: \t\tR$ {aportes:.2f}
-    Taxa de juros (ao ano): \t{taxa_juros_ano:.2f}%
-    Tempo de investimento: \t{periodo_anos} anos
+    - Saldo inicial: \t\tR\$ {valor_inicial:.2f}
+    - Aplicações mensais: \t\tR\$ {aportes:.2f}
+    - Taxa de juros (ao ano): \t{taxa_juros_ano:.2f}%
+    - Tempo de investimento: \t{periodo_anos} anos
     """)
 
     st.markdown(f"---")

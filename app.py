@@ -17,7 +17,7 @@ def calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aporte_mensal, pe
     # taxa_juros_mes = math.pow(1 + taxa_juros_ano, 1/12) - 1 # >> Também pode ser feito da forma: (1 + taxa_juros_ano) ** (1 / 12)
     # aporte_mensal = 100
     if not data_inicio: data_inicio = datetime.datetime.today()
-    assert periodos_anos != None and periodos_meses != None, "Informe pelo menos o período em meses ou o período em anos!"
+    assert periodos_anos != None or periodos_meses != None, "Informe pelo menos o período em meses ou o período em anos!"
     periodos_meses = periodos_anos * 12 if not periodos_meses else periodos_meses
 
     # Criação de listas que serão utilizadas para construir o DataFrame

@@ -93,6 +93,7 @@ if aportes and periodo_anos and taxa_juros_ano:
     Saldo inicial: R$ {valor_inicial:.2f}
     Aplicações mensais: R$ {aportes:.2f}
     Taxa de juros (ao ano): {taxa_juros_ano:.2f}%
+    Tempo de investimento: {periodo_anos} anos
     """)
 
     st.dataframe(

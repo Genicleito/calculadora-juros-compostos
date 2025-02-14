@@ -84,3 +84,20 @@ df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aportes, periodo
 st.markdown(f"## Resultado")
 
 st.dataframe(df.sort_values("mes", ascending=True), use_container_width=True, hide_index=True)
+
+adsense_code = """
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8402016013441943"
+     crossorigin="anonymous"></script>
+<!-- Horizontal AD -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-8402016013441943"
+     data-ad-slot="1575342484"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+"""
+
+st.components.v1.html(adsense_code)

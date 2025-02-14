@@ -73,7 +73,7 @@ st.markdown(f"## Insira as informações abaixo para realizar o cálculo")
 
 valor_inicial = st.number_input("Valor Inicial:", placeholder="Insira o valor inicial que você já possui...")
 aportes = st.number_input("Aportes mensais:", value=None, placeholder="Insira o valor que você pretende investir todo mês...")
-periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, max_value=100, step=1, placeholder="Insira por quantos anos você pretende investir..."))
+periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, max_value=100, step=1, placeholder="Insira por quantos anos você pretende investir...")
 data_inicio = st.date_input("Data de início:", datetime.datetime.now(pytz.timezone('America/Sao_Paulo')).date())
 taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=None, format="%.2f%%")
 

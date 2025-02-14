@@ -86,7 +86,7 @@ if aportes and periodo_anos and taxa_juros_ano:
 
     st.dataframe(
         # df.style.format({'Valor investido': 'R$ {:.2f}', 'Valor resultado (com os juros)': 'R$ {:.2f}'}).sort_values("Mês"),
-        df.style.sort_values("Mês"),
+        df.sort_values("Mês"),
         use_container_width=True,
         hide_index=True
     )

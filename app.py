@@ -1,12 +1,13 @@
-import datetime
-import pytz
-from dateutil.relativedelta import relativedelta
 import pandas as pd
 import numpy as np
-import streamlit as st
-import streamlit.components.v1 as components
+import datetime
+import pytz
+import os
+from dateutil.relativedelta import relativedelta
 import plotly.graph_objects as go
 import plotly.express as px
+import streamlit as st
+import streamlit.components.v1 as components
 
 def calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aporte_mensal, periodos_anos=None, periodos_meses=None, data_inicio=None):
     # # Definição das informações utilizadas para calcular juros compostos

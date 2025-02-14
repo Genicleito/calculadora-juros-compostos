@@ -75,7 +75,7 @@ install_requirements()
 valor_inicial = st.number_input("Valor Inicial:")
 aportes = st.number_input("Aportes mensais:")
 taxa_juros_ano = st.number_input("Taxa de juros anual:")
-periodo_anos = int(st.number_input("Tempo de investimento (em anos):", format="%d"))
+periodo_anos = int(st.number_input("Tempo de investimento (em anos):", format="%0.1f"))
 data_inicio = st.date_input("Data de início:", datetime.datetime.today())
 
 st.write(f"{valor_inicial}, {aportes}, {taxa_juros_ano}, {periodo_anos}: {valor_inicial and aportes and taxa_juros_ano and periodo_anos}")

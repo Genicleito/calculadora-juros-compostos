@@ -82,7 +82,18 @@ if aportes and periodo_anos and taxa_juros_ano:
 
     st.markdown(f"## Resultado")
 
-    st.write(f"> Considerando saldo inicial de R\$ {valor_inicial:.2f}, aplicações mensais de R\$ {aportes:.2f} e taxa de juros de {taxa_juros_ano:.2f}% ao ano, em {periodo_anos} anos você terá R\$ {df.sort_values("Mês")['Valor resultado (com os juros)'].round(2).iloc[-1]:.2f} sendo que saiu do seu bolso como investimento apenas R\$ {df.sort_values("Mês")['Valor investido'].round(2).iloc[-1]:.2f}")
+    portfolio_final = df.sort_values("Mês")['Valor resultado (com os juros)'].round(2).iloc[-1]
+    total_em_aportes = df.sort_values("Mês")['Valor investido'].round(2).iloc[-1]
+    total_em_juros = portfolio_final - total_em_aportes
+
+    st.write(f"""> Em {periodo_anos} anos você terá **R\$ {portfolio_final:.2f}**
+    Deste valor, saíram do seu bolso como investimento apenas R\$ {total_em_aportes:.2f} e R\$ {total_em_juros} foi o que você teve de rendimento com os juros.
+
+    As configurações utilizadas para gerar esses valores foram:
+    - Saldo inicial: R\$ {valor_inicial:.2f}
+    - Aplicações mensais: R\$ {aportes:.2f}
+    - Taxa de juros (ao ano): {taxa_juros_ano:.2f}%
+    """)
 
     st.dataframe(
         # df.round(2).style.format({'Valor investido': 'R$ {:.2f}', 'Valor resultado (com os juros)': 'R$ {:.2f}'}).sort_values("Mês"),

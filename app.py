@@ -39,7 +39,7 @@ def calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aporte_mensal, pe
 
     # DataFrame com a evolução dos Juros Compostos
     return pd.DataFrame({
-        'periodo': periodos,
+        # 'periodo': periodos,
         'mes': meses,
         'valor_investido': valores_investidos,
         'valor_com_juros': valores_com_juros,
@@ -84,4 +84,4 @@ df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aportes, periodo
 
 st.markdown(f"## Resultado")
 
-st.dataframe(df.sort_values("mes", ascending=False), use_container_width=True, hide_index=True)
+st.dataframe(df.sort_values("mes", ascending=True), use_container_width=True, hide_index=True)

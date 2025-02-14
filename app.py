@@ -84,4 +84,4 @@ df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aportes, periodo
 
 st.markdown(f"## Resultado")
 
-st.dataframe(df.sort_values(mes, ascending=False), use_container_width=True, hide_index=True)
+st.dataframe(df.sort_values("mes", ascending=False), use_container_width=True, hide_index=True)

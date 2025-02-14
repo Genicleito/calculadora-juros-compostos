@@ -1,8 +1,5 @@
-import sys
-import os
-import requests
-import math
 import datetime
+import pytz
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 import numpy as np
@@ -40,9 +37,9 @@ def calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aporte_mensal, pe
     # DataFrame com a evolução dos Juros Compostos
     return pd.DataFrame({
         # 'periodo': periodos,
-        'mes': meses,
-        'valor_investido': valores_investidos,
-        'valor_com_juros': valores_com_juros,
+        'Mês': meses,
+        'Valor investido': valores_investidos,
+        'Valor resultado (com os juros)': valores_com_juros,
     })
 
 
@@ -72,32 +69,25 @@ install_requirements()
 
 # st.write(f"### Gráfico com visualização da série do ativo no TradingView")
 
-valor_inicial = st.number_input("Valor Inicial:")
-aportes = st.number_input("Aportes mensais:")
-taxa_juros_ano = st.number_input("Taxa de juros anual (%):") / 100
-periodo_anos = int(st.number_input("Tempo de investimento (em anos):", format="%0.1f"))
-data_inicio = st.date_input("Data de início:", datetime.datetime.today())
+st.markdown(f"## Insira as informações abaixo para realizar o cálculo")
 
-# if aportes and taxa_juros_ano and periodo_anos:
-df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aportes, periodo_anos, data_inicio=data_inicio)
+valor_inicial = st.number_input("Valor Inicial:", placeholder="Insira o valor inicial que você já possui...")
+aportes = st.number_input("Aportes mensais:", value=None, placeholder="Insira o valor que você pretende investir todo mês...")
+periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, max_value=100, step=1, placeholder="Insira por quantos anos você pretende investir..."))
+data_inicio = st.date_input("Data de início:", datetime.datetime.now(pytz.timezone('America/Sao_Paulo')).date())
+taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=None, format="%.2f%%")
+
+if aportes and periodo_anos and taxa_juros_ano:
+    df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano / 100, aportes, periodo_anos, data_inicio=data_inicio)
 
 st.markdown(f"## Resultado")
 
-st.dataframe(df.sort_values("mes", ascending=True), use_container_width=True, hide_index=True)
+st.write(f"> Considerando a taxa de juros de {round(taxa_juros_ano / 100, 2)}%, em {periodo_anos} anos você terá {df.sort_values("Mês")['Valor resultado (com os juros)'].iloc[-1]} sendo que saiu do seu bolso como investimento apenas {df.sort_values("Mês")['Valor investido'].iloc[-1]}")
 
-adsense_code = """
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8402016013441943"
-     crossorigin="anonymous"></script>
-<!-- Horizontal AD -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-8402016013441943"
-     data-ad-slot="1575342484"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-"""
+st.dataframe(
+    df.style.format({'Valor investido': 'R$ {:,}', 'Valor resultado (com os juros)': 'R$ {:,}'}).sort_values("Mês"),
+    use_container_width=True,
+    hide_index=True
+)
 
-st.components.v1.html(adsense_code)
+# st.components.v1.html(adsense_code)

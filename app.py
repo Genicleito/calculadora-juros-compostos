@@ -106,7 +106,7 @@ if aportes and periodo_anos and taxa_juros_ano:
 
     st.dataframe(
         # df.round(2).style.format({'Valor investido': 'R$ {:.2f}', 'Valor resultado (com os juros)': 'R$ {:.2f}'}).sort_values("Mês"),
-        pd.DataFrame.round(2).sort_values("Mês").format({
+        df.round(2).sort_values("Mês").format({
             "Valor investido": lambda x: f"${x:,.2f}".replace('.', '').replace(',', '.'),
             "Valor resultado (com os juros)": lambda x: f"${x:,.2f}".replace('.', '').replace(',', '.'),
         }),

@@ -6,6 +6,7 @@ import numpy as np
 import streamlit as st
 import streamlit.components.v1 as components
 import plotly.graph_objects as go
+import plotly.express as px
 
 def calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aporte_mensal, periodos_anos=None, periodos_meses=None, data_inicio=None):
     # # Definição das informações utilizadas para calcular juros compostos
@@ -101,6 +102,13 @@ if aportes and periodo_anos and taxa_juros_ano:
     st.markdown(f"### Exibição dos resultados")
 
     # st.markdown(f"\n> Gráfico de pizza")
+    fig = px.pie(
+        pd.DataFrame({x: total_em_aportes, y: total_em_juros}),
+        values='x',
+        names='y',
+        title='Distribuição dos valores aportados e rendimentos'
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
     st.markdown(f"\n> Tabela com os resultados mês a mês:")
     st.dataframe(

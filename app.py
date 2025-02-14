@@ -86,7 +86,8 @@ if aportes and periodo_anos and taxa_juros_ano:
     total_em_aportes = df.sort_values("Mês")['Valor investido'].round(2).iloc[-1]
     total_em_juros = portfolio_final - total_em_aportes
 
-    st.write(f"""> Em {periodo_anos} anos você terá **R\$ {portfolio_final:.2f}**<br>
+    st.write(f"""> Em {periodo_anos} anos você terá **R\$ {portfolio_final:.2f}**
+    
     Deste valor, saíram do seu bolso como investimento apenas R\$ {total_em_aportes:.2f} e R\$ {total_em_juros} foi o que você teve de rendimento com os juros.
 
     As configurações utilizadas para gerar esses valores foram:

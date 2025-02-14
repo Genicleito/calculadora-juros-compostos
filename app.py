@@ -96,7 +96,7 @@ if aportes and periodo_anos and taxa_juros_ano:
     Tempo de investimento: \t{periodo_anos} anos
     """)
 
-    st.markdown(f"## Tabela com os resultados mês a mês")
+    st.markdown(f"> Tabela com os resultados mês a mês:")
     st.dataframe(
         # df.round(2).style.format({'Valor investido': 'R$ {:.2f}', 'Valor resultado (com os juros)': 'R$ {:.2f}'}).sort_values("Mês"),
         df.round(2).sort_values("Mês"),

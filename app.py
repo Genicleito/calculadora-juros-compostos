@@ -85,8 +85,8 @@ if aportes and periodo_anos and taxa_juros_ano:
     st.write(f"> Considerando a taxa de juros de {round(taxa_juros_ano / 100, 2)}%, em {periodo_anos} anos você terá R\$ {df.sort_values("Mês")['Valor resultado (com os juros)'].round(2).iloc[-1]} sendo que saiu do seu bolso como investimento apenas R\$ {df.sort_values("Mês")['Valor investido'].round(2).iloc[-1]}")
 
     st.dataframe(
-        # df.style.format({'Valor investido': 'R$ {:.2f}', 'Valor resultado (com os juros)': 'R$ {:.2f}'}).sort_values("Mês"),
-        df.sort_values("Mês"),
+        # df.round(2).style.format({'Valor investido': 'R$ {:.2f}', 'Valor resultado (com os juros)': 'R$ {:.2f}'}).sort_values("Mês"),
+        df.round(2).sort_values("Mês"),
         use_container_width=True,
         hide_index=True
     )

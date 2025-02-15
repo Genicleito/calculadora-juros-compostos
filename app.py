@@ -109,7 +109,7 @@ if aportes and periodo_anos and taxa_juros_ano:
 
 
     fig_bars = px.bar(
-        df.assign(Ano=pd.to_datetime(df['Mês']).dt.year).groupby("Ano").agg({"Valor investido": "sum", "Valor resultado (com os juros)": "sum"}),
+        df.assign(Ano=pd.to_datetime(df['Mês']).dt.year).groupby("Ano").agg({"Valor investido": "sum", "Valor resultado (com os juros)": "sum"}).reset_index(),
         x='Ano',
         y=['Valor investido', 'Valor resultado (com os juros)'],
         # title="Rendimentos por ano"

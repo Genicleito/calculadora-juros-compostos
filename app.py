@@ -51,18 +51,18 @@ def install_requirements():
 
 install_requirements()
 
-@st.cache_resource
-def load_data():
-    selic_hist = pd.read_json("https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?formato=json")
-    selic_hist["data"] = pd.to_datetime(selic_hist['data'], format="%d/%m/%Y")
-    return selic_hist.sort_values("data").iloc[-30:]
+# @st.cache_resource
+# def load_data():
+#     selic_hist = pd.read_json("https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?formato=json")
+#     selic_hist["data"] = pd.to_datetime(selic_hist['data'], format="%d/%m/%Y")
+#     return selic_hist.sort_values("data").iloc[-30:]
 
 
-with st.status('Loading data...'):
-    ts = datetime.datetime.now()
-    st.write(f"_{ts.strftime('%Y-%m-%d %H:%M:%S')} Lendo dados... Aguarde alguns instantes..._")
-    df_selic = load_data()
-    st.write(f"SELIC atual: {df_selic.sort_values("data")['valor'].round(2).iloc[-1] * 100}%")
+# with st.status('Loading data...'):
+#     ts = datetime.datetime.now()
+#     st.write(f"_{ts.strftime('%Y-%m-%d %H:%M:%S')} Lendo dados... Aguarde alguns instantes..._")
+#     df_selic = load_data()
+#     st.write(f"SELIC atual: {df_selic.sort_values("data")['valor'].round(2).iloc[-1] * 100}%")
 
 
 st.markdown(f"## Insira as informações abaixo para realizar o cálculo")

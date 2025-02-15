@@ -99,13 +99,23 @@ if aportes and periodo_anos and taxa_juros_ano:
     st.markdown(f"### Gráficos dos resultados")
 
     # st.markdown(f"\n> Gráfico de pizza")
-    fig = px.pie(
+    fig_pie = px.pie(
         pd.DataFrame({'Valor': [total_em_aportes, total_em_juros], 'Origem': ['Valor investido', 'Rendimento']}),
         values='Valor',
         names='Origem',
         title='Distribuição dos valores aportados e rendimentos'
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig_pie, use_container_width=True)
+
+
+    fig_bars = px.bar(
+        df.assign(Ano=df['Mês'].year).groupby("Ano").agg({"Valor investido": "sum", "Valor resultado (com os juros)": "sum"}),
+        x='Ano',
+        y=['Valor investido', 'Valor resultado (com os juros)']
+    )
+    st.plotly_chart(fig_bars, use_container_width=True)
+
+    st.markdown(f"---")
 
     st.markdown(f"\n### Tabela com os resultados mês a mês")
 

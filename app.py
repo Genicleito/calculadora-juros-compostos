@@ -53,9 +53,9 @@ install_requirements()
 
 @st.cache_resource
 def load_data():
-    df_tmp = pd.read_json("https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?formato=json")
-    df_tmp["data"] = pd.to_datetime(selic_hist['data'], format="%d/%m/%Y")
-    return df_tmp
+    selic_hist = pd.read_json("https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?formato=json")
+    selic_hist["data"] = pd.to_datetime(selic_hist['data'], format="%d/%m/%Y")
+    return selic_hist.sort_values("data").iloc[-30:]
 
 
 with st.status('Loading data...'):

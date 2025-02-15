@@ -112,7 +112,7 @@ if aportes and periodo_anos and taxa_juros_ano:
         df.assign(Ano=pd.to_datetime(df['Mês']).dt.year).groupby("Ano").agg({"Valor investido": "sum", "Valor resultado (com os juros)": "sum"}),
         x='Ano',
         y=['Valor investido', 'Valor resultado (com os juros)'],
-        title="Rendimentos por ano"
+        # title="Rendimentos por ano"
     )
     st.plotly_chart(fig_bars, use_container_width=True)
 

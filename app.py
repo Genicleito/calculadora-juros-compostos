@@ -64,6 +64,10 @@ install_requirements()
 #     df_selic = load_data()
 #     st.write(f"SELIC atual: {df_selic.sort_values("data")['valor'].round(2).iloc[-1] * 100}%")
 
+st.set_page_config(
+    page_title="Calculadora de Juros Compostos",
+    page_icon=":chart_with_upwards_trend:"
+)
 
 st.markdown(f"## Insira as informações abaixo para realizar o cálculo")
 

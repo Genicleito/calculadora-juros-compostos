@@ -80,13 +80,17 @@ data_inicio = st.date_input("Data de início:", (datetime.datetime.now(pytz.time
 if aportes and periodo_anos and taxa_juros_ano:
     df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano / 100, aportes, periodo_anos, data_inicio=data_inicio)
 
+    df = df.assign(**{
+        "Total em juros:", (df["Valor resultado (com os juros)"] - df["Valor investido"]).round(2)
+    })
+
     st.markdown(f"## Resultado")
 
     portfolio_final = df.sort_values("Mês")['Valor resultado (com os juros)'].round(2).iloc[-1]
     total_em_aportes = df.sort_values("Mês")['Valor investido'].round(2).iloc[-1]
     total_em_juros = portfolio_final - total_em_aportes
 
-    st.markdown(f"> Em {periodo_anos} anos você terá **R\$ {portfolio_final:.2f}**.")
+    st.markdown(f"> Em {periodo_anos} ano{'s' if periodo_anos > 1 else ''} você terá **R\$ {portfolio_final:.2f}**.")
     st.markdown(f"""
     - Deste valor, saíram do seu bolso, como investimento, apenas R\$ {total_em_aportes:.2f}.
     - R\$ {round(total_em_juros, 2)} foi o que você teve de rendimento com os juros do investimento.
@@ -98,7 +102,7 @@ if aportes and periodo_anos and taxa_juros_ano:
     - Saldo inicial: \t\t**R\$ {valor_inicial:.2f}**
     - Aplicações mensais: \t\t**R\$ {aportes:.2f}**
     - Taxa de juros (ao ano): \t**{taxa_juros_ano:.2f}%**
-    - Tempo de investimento: \t**{periodo_anos} anos**
+    - Tempo de investimento: \t**{periodo_anos} ano{'s' if periodo_anos > 1 else ''}**
     """)
 
     st.markdown(f"---")
@@ -118,8 +122,8 @@ if aportes and periodo_anos and taxa_juros_ano:
     fig_bars = px.bar(
         df.assign(Ano=pd.to_datetime(df['Mês']).dt.year).sort_values("Mês", ascending=False).drop_duplicates(subset=["Ano"]),
         x='Ano',
-        y=['Valor investido', 'Valor resultado (com os juros)'],
-        title="Rendimentos por ano"
+        y=['Valor investido', 'Total em juros'],
+        title="Distribuição dos rendimentos por ano"
     )
     st.plotly_chart(fig_bars, use_container_width=True)
 
@@ -131,6 +135,7 @@ if aportes and periodo_anos and taxa_juros_ano:
         # df.round(2).style.format({'Valor investido': 'R$ {:.2f}', 'Valor resultado (com os juros)': 'R$ {:.2f}'}).sort_values("Mês"),
         df.round(2).sort_values("Mês").style.format({
             "Valor investido": lambda x: f"R$ {x:,.2f}".replace(',', ''),
+            "Total em juros": lambda x: f"R$ {x:,.2f}".replace(',', ''),
             "Valor resultado (com os juros)": lambda x: f"R$ {x:,.2f}".replace(',', ''),
         }),
         use_container_width=True,

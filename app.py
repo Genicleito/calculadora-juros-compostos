@@ -123,6 +123,7 @@ if aportes and periodo_anos and taxa_juros_ano:
         df.assign(Ano=pd.to_datetime(df['Mês']).dt.year).sort_values("Mês", ascending=False).drop_duplicates(subset=["Ano"]),
         x='Ano',
         y=['Valor investido', 'Total em juros'],
+        values=['Valor investido', 'Total em juros'],
         title="Distribuição dos rendimentos por ano"
     )
     st.plotly_chart(fig_bars, use_container_width=True)

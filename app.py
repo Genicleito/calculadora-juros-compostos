@@ -81,7 +81,7 @@ if aportes and periodo_anos and taxa_juros_ano:
     df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano / 100, aportes, periodo_anos, data_inicio=data_inicio)
 
     df = df.assign(**{
-        "Total em juros:", (df["Valor resultado (com os juros)"] - df["Valor investido"]).round(2)
+        "Total em juros": (df["Valor resultado (com os juros)"] - df["Valor investido"]).round(2)
     })
 
     st.markdown(f"## Resultado")

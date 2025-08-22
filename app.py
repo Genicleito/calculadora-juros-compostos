@@ -72,12 +72,12 @@ st.set_page_config(
 st.markdown(f"## Insira as informações abaixo para realizar o cálculo")
 
 valor_inicial = st.number_input("Saldo Inicial:", placeholder="Insira o valor inicial que você já possui...")
-aportes = st.number_input("Aplicações mensais:", value=None, placeholder="Insira o valor que você pretende investir todo mês...")
+aportes = st.number_input("Aplicações mensais:", value=0, placeholder="Insira o valor que você pretende investir todo mês...")
 periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, max_value=100, step=1, placeholder="Insira por quantos anos você pretende investir...")
 taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=None, placeholder="Insira a taxa de juros anual dos seus investimentos...")
 data_inicio = st.date_input("Data de início:", (datetime.datetime.now(pytz.timezone('America/Sao_Paulo')) + relativedelta(months=1)).date().replace(day=1))
 
-if aportes and periodo_anos and taxa_juros_ano:
+if periodo_anos and taxa_juros_ano:
     df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano / 100, aportes, periodo_anos, data_inicio=data_inicio)
 
     df = df.assign(**{
@@ -90,10 +90,10 @@ if aportes and periodo_anos and taxa_juros_ano:
     total_em_aportes = df.sort_values("Mês")['Valor investido'].round(2).iloc[-1]
     total_em_juros = portfolio_final - total_em_aportes
 
-    st.markdown(f"> Em {periodo_anos} ano{'s' if periodo_anos > 1 else ''} você terá **R\$ {portfolio_final:.2f}**.")
+    st.success(f"> Em {periodo_anos} ano{'s' if periodo_anos > 1 else ''} você terá **R\$ {portfolio_final:.2f}**.")
     st.markdown(f"""
-    - Deste valor, saíram do seu bolso, como investimento, apenas R\$ {total_em_aportes:.2f}.
-    - R\$ {round(total_em_juros, 2)} foi o que você teve de rendimento com os juros do investimento.
+    > - Deste valor, você investiu R\$ {total_em_aportes:.2f} com aportes.
+    > - R\$ {round(total_em_juros, 2)} foi o que você obteve de rendimento com os juros compostos do investimento.
     """)
     
     st.markdown(f"""

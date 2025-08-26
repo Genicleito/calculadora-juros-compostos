@@ -41,7 +41,7 @@ def calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aporte_mensal, pe
         # 'periodo': periodos,
         'Mês': meses,
         'Valor investido': valores_investidos,
-        'Valor resultado (com os juros)': valores_com_juros,
+        'Portfólio (com os juros)': valores_com_juros,
     })
 
 
@@ -69,6 +69,10 @@ st.set_page_config(
     page_icon=":chart_with_upwards_trend:"
 )
 
+# Botão para mostrar/ocultar o DataFrame com o rendimento real corrigido pela inflação
+if 'show_rent_real' not in st.session_state:
+    st.session_state.show_rent_real = False  # Inicializando o estado
+
 st.markdown(f"## Insira as informações abaixo para realizar o cálculo")
 
 valor_inicial = st.number_input("Saldo Inicial:", value=None, placeholder="Insira o valor inicial que você já possui...")
@@ -76,39 +80,62 @@ aportes = st.number_input("Aplicações mensais:", value=0, placeholder="Insira 
 periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, max_value=100, step=1, placeholder="Insira por quantos anos você pretende investir...")
 taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=None, placeholder="Insira a taxa de juros anual dos seus investimentos...")
 data_inicio = st.date_input("Data de início:", (datetime.datetime.now(pytz.timezone('America/Sao_Paulo')) + relativedelta(months=1)).date().replace(day=1))
-# inflacao_ano = st.number_input("Inflação anual esperada (opcional):", value=None, placeholder="Insira a inflação média anual esperada para o período [opcional]...")
-inflacao_ano = None
+inflacao_ano = st.number_input("Inflação anual esperada (opcional):", value=None, placeholder="Insira a inflação média anual esperada para o período [opcional]...")
 
 if valor_inicial and periodo_anos and taxa_juros_ano:
-    # Caso seja informada a inflação anual então o código calcula a rentabilidade real, caso contrário considera apenas o efeito dos juros comopstos sem considerar inflação.
-    rentabilidade_real = (1 + (taxa_juros_ano / 100)) / (1 + (inflacao_ano / 100)) - 1 if inflacao_ano else taxa_juros_ano / 100
-    
-    # Realiza o calculo
-    df = calculadora_juros_compostos(valor_inicial, rentabilidade_real, aportes, periodo_anos, data_inicio=data_inicio)
+    # Realiza o calculo dos juros compostos
+    df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano / 100, aportes, periodo_anos, data_inicio=data_inicio)
+
+    if inflacao_ano:
+        rentabilidade_real = (1 + (taxa_juros_ano / 100)) / (1 + (inflacao_ano / 100)) - 1
+        # Realiza o cálculo do resultado real corrigido pela inflação
+        df_real = calculadora_juros_compostos(valor_inicial, rentabilidade_real, aportes, periodo_anos, data_inicio=data_inicio)
+        df_real = df_real.assign(**{"Total em juros": df_real["Portfólio (com os juros)"] - df_real["Valor investido"]})
 
     df = df.assign(**{
-        "Total em juros": (df["Valor resultado (com os juros)"] - df["Valor investido"]).round(2)
+        "Total em juros": (df["Portfólio (com os juros)"] - df["Valor investido"]).round(2)
     })
 
-    st.markdown(f"## Resultado")
+    st.markdown(f"## Resultado (desconsiderando a inflação)")
 
-    portfolio_final = df.sort_values("Mês")['Valor resultado (com os juros)'].round(2).iloc[-1]
+    portfolio_final = df.sort_values("Mês")['Portfólio (com os juros)'].round(2).iloc[-1]
     total_em_aportes = df.sort_values("Mês")['Valor investido'].round(2).iloc[-1]
     total_em_juros = portfolio_final - total_em_aportes
 
-    st.success(f"> Em {periodo_anos} ano{'s' if periodo_anos > 1 else ''} você terá **R\$ {portfolio_final:.2f}**.")
-    st.markdown(f"""
-    > - Deste valor, você investiu R\$ {total_em_aportes:.2f} com aportes.
-    > - R\$ {round(total_em_juros, 2)} foi o que você obteve de rendimento com os juros compostos do investimento.
+    st.success(f"> Em {periodo_anos} ano{'s' if periodo_anos > 1 else ''} ({df.sort_values('Mês')['Mês'].iloc[-1].year}) você terá **R\\$ {portfolio_final:.2f}**.")
+    st.success(f"""
+    > - Deste valor, você investiu **R\\$ {total_em_aportes:.2f}** com aportes.
+    > - **R\\$ {total_em_juros:.2f}** foi o que você obteve de rendimento com os juros compostos do investimento.
     """)
     
     st.markdown(f"""
-    **As configurações utilizadas para gerar esses valores foram:**
+    ### **Informações completas sobre a simulação:**
 
-    - Saldo inicial: \t\t**R\$ {valor_inicial:.2f}**
-    - Aplicações mensais: \t\t**R\$ {aportes:.2f}**
-    - Taxa de juros (ao ano): \t**{taxa_juros_ano:.2f}%**
+    - **Valor final** ({df.sort_values('Mês')['Mês'].iloc[-1].year}): \t\t**R\\$ {portfolio_final:.2f}**
+        - Total investido: \t\t**R\\$ {total_em_aportes:.2f}** ({total_em_aportes / portfolio_final:.2%})
+        - Total em juros: **R$ \t{total_em_juros:.2f}** ({total_em_juros / portfolio_final:.2%})
+    - Saldo inicial: \t\t**R\\$ {valor_inicial:.2f}**
+    - Aplicações mensais: \t\t**R\\$ {aportes:.2f}**
     - Tempo de investimento: \t**{periodo_anos} ano{'s' if periodo_anos > 1 else ''}**
+    - Taxa de juros (ao ano): \t**{taxa_juros_ano:.2f}%**
+        - Taxa de juros mensal: \t**{((1 + (taxa_juros_ano / 100)) ** (1 / 12)) - 1:.3%}**
+    """)
+
+    if inflacao_ano:
+        # Valor final real corrigido pela inflação
+        portfolio_final_real = df_real.sort_values('Mês')['Portfólio (com os juros)'].iloc[-1]
+        valor_total_real_aportes = df_real.sort_values("Mês")['Valor investido'].iloc[-1]
+        total_em_juros_real = portfolio_final_real - valor_total_real_aportes
+
+        st.markdown(f"""
+        ### **Valores corrigidos pela inflação:**
+
+    - Valor final corrigido pela inflação ({df_real.sort_values('Mês')['Mês'].iloc[-1].year}): \t\t**R\\$ {portfolio_final_real:.2f}**
+        - Total investido: \t\t**R\\$ {valor_total_real_aportes:.2f}** ({valor_total_real_aportes / portfolio_final_real:.2%})
+        - Total em juros: **R$ \t{total_em_juros_real:.2f}** ({total_em_juros_real / portfolio_final_real:.2%})
+    - Inflação projetada ao ano: \t**{inflacao_ano:.2f}%**
+    - Taxa de juros real (a.a.): \t**{rentabilidade_real:.2%}**
+        - Taxa de juros real mensal: \t**{((1 + rentabilidade_real) ** (1 / 12)) - 1:.2%}**
     """)
 
     # # TODO: Montar tabela como o exemplo abaixo:
@@ -125,7 +152,7 @@ if valor_inicial and periodo_anos and taxa_juros_ano:
 
     st.markdown(f"---")
 
-    st.markdown(f"### Gráficos dos resultados")
+    st.markdown(f"### Gráficos dos resultados (desconsiderando a inflação)")
 
     # st.markdown(f"\n> Gráfico de pizza")
     fig_pie = px.pie(
@@ -148,18 +175,43 @@ if valor_inicial and periodo_anos and taxa_juros_ano:
 
     st.markdown(f"---")
 
-    st.markdown(f"\n### Tabela com os resultados mês a mês")
+    st.markdown(f"\n### Tabela com os resultados mês a mês (desconsiderando a inflação)")
 
     st.dataframe(
-        # df.round(2).style.format({'Valor investido': 'R$ {:.2f}', 'Valor resultado (com os juros)': 'R$ {:.2f}'}).sort_values("Mês"),
-        df.round(2).sort_values("Mês").style.format({
+        # df.round(2).style.format({'Valor investido': 'R$ {:.2f}', 'Portfólio (com os juros)': 'R$ {:.2f}'}).sort_values("Mês"),
+        df[
+            ["Mês", "Valor investido", "Total em juros", "Portfólio (com os juros)"]
+        ].sort_values("Mês").style.format({
             "Valor investido": lambda x: f"R$ {x:,.2f}".replace(',', ''),
             "Total em juros": lambda x: f"R$ {x:,.2f}".replace(',', ''),
-            "Valor resultado (com os juros)": lambda x: f"R$ {x:,.2f}".replace(',', ''),
+            "Portfólio (com os juros)": lambda x: f"R$ {x:,.2f}".replace(',', ''),
         }),
         use_container_width=True,
         hide_index=True
     )
+
+    if inflacao_ano:
+        def toggle_df():
+            st.session_state.show_rent_real = not st.session_state.show_rent_real
+
+        st.markdown("---")
+        st.button("**Ocultar tabela com o rendimento real**" if st.session_state.show_rent_real else "**Mostrar tabela com o rendimento real**", on_click=toggle_df)
+
+        # Mostrar o DataFrame com o rendimento real se o estado for True
+        if st.session_state.show_rent_real:
+            st.markdown(f"### Tabela com o rendimento real considerando inflação de {inflacao_ano / 100:.2%} a.a.")
+            st.dataframe(
+            # df.round(2).style.format({'Valor investido': 'R$ {:.2f}', 'Portfólio (com os juros)': 'R$ {:.2f}'}).sort_values("Mês"),
+            df_real.rename(columns={'Total em juros': 'Total em juros reais', 'Portfólio (com os juros)': 'Portfólio (com juros reais)'})[[
+                "Mês", "Valor investido", "Total em juros reais", "Portfólio (com juros reais)"
+            ]].sort_values("Mês").style.format({
+                "Valor investido": lambda x: f"R$ {x:,.2f}".replace(',', ''),
+                "Total em juros reais": lambda x: f"R$ {x:,.2f}".replace(',', ''),
+                "Portfólio (com juros reais)": lambda x: f"R$ {x:,.2f}".replace(',', ''),
+            }),
+            use_container_width=True,
+            hide_index=True
+        )
 
     # TODO: adicionar botão para exportar o dataframe com os valores mensais em excel onde cada ano terá uma aba específica
 

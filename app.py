@@ -76,7 +76,8 @@ aportes = st.number_input("Aplicações mensais:", value=0, placeholder="Insira 
 periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, max_value=100, step=1, placeholder="Insira por quantos anos você pretende investir...")
 taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=None, placeholder="Insira a taxa de juros anual dos seus investimentos...")
 data_inicio = st.date_input("Data de início:", (datetime.datetime.now(pytz.timezone('America/Sao_Paulo')) + relativedelta(months=1)).date().replace(day=1))
-inflacao_ano = st.number_input("Inflação anual esperada (opcional):", value=None, placeholder="Insira a inflação média anual esperada para o período [opcional]...")
+# inflacao_ano = st.number_input("Inflação anual esperada (opcional):", value=None, placeholder="Insira a inflação média anual esperada para o período [opcional]...")
+inflacao_ano = None
 
 if valor_inicial and periodo_anos and taxa_juros_ano:
     # Caso seja informada a inflação anual então o código calcula a rentabilidade real, caso contrário considera apenas o efeito dos juros comopstos sem considerar inflação.

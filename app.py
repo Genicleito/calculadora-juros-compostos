@@ -76,9 +76,14 @@ aportes = st.number_input("Aplicações mensais:", value=0, placeholder="Insira 
 periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, max_value=100, step=1, placeholder="Insira por quantos anos você pretende investir...")
 taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=None, placeholder="Insira a taxa de juros anual dos seus investimentos...")
 data_inicio = st.date_input("Data de início:", (datetime.datetime.now(pytz.timezone('America/Sao_Paulo')) + relativedelta(months=1)).date().replace(day=1))
+inflacao_ano = st.number_input("Inflação anual esperada:", value=None, placeholder="Insira a inflação média anual esperada para o período...")
 
 if valor_inicial and periodo_anos and taxa_juros_ano:
-    df = calculadora_juros_compostos(valor_inicial, taxa_juros_ano / 100, aportes, periodo_anos, data_inicio=data_inicio)
+    # Caso seja informada a inflação anual então o código calcula a rentabilidade real, caso contrário considera apenas o efeito dos juros comopstos sem considerar inflação.
+    rentabilidade_real = (1 + (taxa_juros_ano / 100)) / (1 + (inflacao_ano / 100)) - 1 if inflacao_ano else taxa_juros_ano / 100
+    
+    # Realiza o calculo
+    df = calculadora_juros_compostos(valor_inicial, rentabilidade_real, aportes, periodo_anos, data_inicio=data_inicio)
 
     df = df.assign(**{
         "Total em juros": (df["Valor resultado (com os juros)"] - df["Valor investido"]).round(2)
@@ -104,6 +109,18 @@ if valor_inicial and periodo_anos and taxa_juros_ano:
     - Taxa de juros (ao ano): \t**{taxa_juros_ano:.2f}%**
     - Tempo de investimento: \t**{periodo_anos} ano{'s' if periodo_anos > 1 else ''}**
     """)
+
+    # # TODO: Montar tabela como o exemplo abaixo:
+    # | Indicador                        | Valor                |
+    # | -------------------------------- | -------------------- |
+    # | **Valor final corrigido (2064)** | **R\$ X.XXX.XXX,XX** |
+    # | **Rendimento real acumulado**    | **R\$ X.XXX.XXX,XX** |
+    # | **Total aportado** (300×468)     | **R\$ XXX.XXX,XX**   |
+    # | **Patrimônio inicial**           | R\$ X.XXX,XX         |
+    # | **Total investido**              | R\$ XXX.XXX,XX       |
+    # | **Rentabilidade real anual**     | **X,XX% a.a.**       |
+    # | **Rentabilidade real mensal**    | **X,XXX% a.m.**      |
+
 
     st.markdown(f"---")
 

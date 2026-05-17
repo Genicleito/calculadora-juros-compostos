@@ -162,12 +162,12 @@ aportes = st.number_input("Aplicações mensais:", value=0, placeholder="Insira 
 periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, max_value=100, step=1, placeholder="Insira por quantos anos você pretende investir...")
 try:
 	ipca_periodo = get_bcb_acumulado(endpoints_bcb['ipca_mensal'], meses = min(periodo_anos * 12, 119)).get('acumulado')
-	selic_periodo = get_bcb(endpoints_bcb['selic_meta'], meses = min(periodo_anos * 12, 119)).get('media')
+	selic_periodo = get_bcb(endpoints_bcb['selic_meta'], meses = min(periodo_anos * 12, 119))
 except Exception as e:
 	print(f"Falha ao obter informações do BCB: {e}")
 	ipca_periodo = None
-	selic_periodo = None
-taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=selic_periodo, placeholder=f"Insira a taxa de juros anual esperada. Ex: {selic_periodo:.2f} (Selic atual)")
+	selic_periodo = dict()
+taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=selic_periodo.get('media'), placeholder=f"Insira a taxa de juros anual esperada. Ex: {selic_periodo.get('ultimo_valor'):.2f} (Selic atual)")
 data_inicio = st.date_input("Data de início:", (datetime.datetime.now(pytz.timezone('America/Sao_Paulo')) + relativedelta(months=1)).date().replace(day=1))
 inflacao_ano = st.number_input("Inflação anual esperada (opcional):", value=ipca_periodo, placeholder="Insira a inflação média anual esperada para o período [opcional]...")
 

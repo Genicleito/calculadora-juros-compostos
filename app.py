@@ -127,11 +127,12 @@ def calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aporte_mensal, pe
     })
 
 
-@st.cache_data
-def install_requirements():
-    os.system("pip install -r requirements.txt")
+# @st.cache_data
+# def install_requirements():
+#     os.system("pip install -r requirements.txt")
 
-install_requirements()
+# install_requirements()
+
 
 # @st.cache_resource
 # def load_data():

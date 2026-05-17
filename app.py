@@ -139,7 +139,7 @@ def obter_taxas_juros():
 		selic = get_bcb(endpoints_bcb['selic_meta'], meses = 120) # Selic dos últimos 10 anos (máximo)
 	except Exception as e:
 		print(f"Falha ao obter informações do BCB: {e}")
-		ipca_10anos = None
+		ipca_10anos = dict()
 		selic = dict()
 	
 	return selic, ipca_10anos

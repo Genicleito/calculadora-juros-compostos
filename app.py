@@ -163,7 +163,8 @@ periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, 
 try:
 	ipca_periodo = get_bcb_acumulado(endpoints_bcb['ipca_mensal'], meses = periodo_anos * 12).get('acumulado')
 	selic_periodo = get_bcb(endpoints_bcb['selic_meta'], meses = periodo_anos * 12).get('media')
-except:
+except Exception as e:
+	print(f"Falha ao obter informações do BCB: {e}")
 	ipca_periodo = None
 	selic_periodo = None
 taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=selic_periodo, placeholder=f"Insira a taxa de juros anual esperada. Ex: {selic_periodo:.2f} (Selic atual)")

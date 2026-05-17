@@ -148,7 +148,7 @@ def obter_taxas_juros():
 selic, ipca_10anos = obter_taxas_juros()
 
 if selic and ipca_10anos:
-	col1, col2, col3 = st.columns([1, 1, 2])
+	col1, col2, col3 = st.columns([1, 1, 1])
 	col1.metric("Selic atual", value=f"{selic.get('ultimo_valor'):.2f}%", delta=f"{selic.get('delta_ultimo_valor')}%")
 	col2.metric("Inflação (IPCA) acumulada 12 meses", value=f"{ipca_10anos.get('ultimo_valor'):.2f}%", delta=f"{ipca_10anos.get('delta_ultimo_valor')}%", delta_color="inverse")
 	col3.metric("IPCA acumulado médio 12 meses (últimos 10 anos)", value=f"{ipca_10anos.get('media'):.2f}%")

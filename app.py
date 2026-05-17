@@ -82,7 +82,7 @@ def get_bcb(cod_serie: int, meses: int = 12, data_inicial: str=None, data_final:
     
 	url = url_api_bcb.format(cod_serie=cod_serie) + f"&dataInicial={data_inicial_str}&dataFinal={data_final_str}"
 	df = pd.read_json(url)
-	df['data'] = pd.to_datetime.datetime(df['data'], format='%d/%m/%Y').dt.date
+	df['data'] = pd.to_datetime(df['data'], format='%d/%m/%Y').dt.date
 	df = df.sort_values('data')
 
 	return {
@@ -161,8 +161,8 @@ valor_inicial = st.number_input("Saldo Inicial:", value=None, placeholder="Insir
 aportes = st.number_input("Aplicações mensais:", value=0, placeholder="Insira o valor que você pretende investir todo mês...")
 periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, max_value=100, step=1, placeholder="Insira por quantos anos você pretende investir...")
 try:
-	ipca_periodo = get_bcb_acumulado(endpoints_bcb['ipca_mensal'], meses = periodo_anos * 12).get('acumulado')
-	selic_periodo = get_bcb(endpoints_bcb['selic_meta'], meses = periodo_anos * 12).get('media')
+	ipca_periodo = get_bcb_acumulado(endpoints_bcb['ipca_mensal'], meses = min(periodo_anos * 12, 119)).get('acumulado')
+	selic_periodo = get_bcb(endpoints_bcb['selic_meta'], meses = min(periodo_anos * 12, 119)).get('media')
 except Exception as e:
 	print(f"Falha ao obter informações do BCB: {e}")
 	ipca_periodo = None

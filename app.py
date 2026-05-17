@@ -9,6 +9,87 @@ import plotly.express as px
 import streamlit as st
 import streamlit.components.v1 as components
 
+url_api_bcb = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.{cod_serie}/dados?formato=json"
+endpoints_bcb = {
+    'ipca_acumulado': 13522,
+    'ipca_mensal': 433,
+    'selic_meta': 432,
+    'selic_mensal': 4390,
+}
+
+def get_bcb_acumulado(cod_serie: int, meses: int = 12, data_inicial: str=None, data_final: str = None):
+	"""
+    Calcula o valor acumulado de uma série do Banco Central do Brasil (BCB) em percentual para um período.
+
+    Args:
+        cod_serie (int): Código da série do BCB.
+        meses (int, opcional): Quantidade de meses do período. Default é 12.
+        data_inicial (str, opcional): Data inicial no formato 'YYYY-MM-DD'. Se não informado, calcula a partir de 'meses'.
+        data_final (str, opcional): Data final no formato 'YYYY-MM-DD'. Se não informado, usa a data atual.
+
+    Returns:
+        dict: Dicionário com o valor acumulado no período {'acumulado': valor}.
+    """
+    if not data_inicial:
+        data_inicial = (datetime.datetime.now().date() - relativedelta(months=meses)).replace(day=1)
+    elif isinstance(data_inicial, str):
+        data_inicial = datetime.datetime.strptime(data_inicial, '%Y-%m-%d')
+
+    if not data_final:
+        data_final = datetime.datetime.now().date()
+    elif isinstance(data_final, str):
+        data_final = datetime.datetime.strptime(data_final, '%Y-%m-%d')
+
+    data_inicial_str = data_inicial.strftime('%d/%m/%Y')
+    data_final_str = data_final.strftime('%d/%m/%Y')
+    
+    url = url_api_bcb.format(cod_serie=cod_serie) + f"&dataInicial={data_inicial_str}&dataFinal={data_final_str}"
+    df = pd.read_json(url)
+
+    df['fator'] = (df['valor'] / 100) + 1
+    fator_acumulado = df['fator'].prod()
+    acumulado = (fator_acumulado - 1) * 100
+    return {
+        "acumulado": acumulado,
+    }
+
+def get_bcb(cod_serie: int, meses: int = 12, data_inicial: str=None, data_final: str = None):
+	"""
+    Obtém estatísticas de uma série do Banco Central do Brasil (BCB) para um período.
+
+    Args:
+        cod_serie (int): Código da série do BCB.
+        meses (int, opcional): Quantidade de meses do período. Default é 12.
+        data_inicial (str, opcional): Data inicial no formato 'YYYY-MM-DD'. Se não informado, calcula a partir de 'meses'.
+        data_final (str, opcional): Data final no formato 'YYYY-MM-DD'. Se não informado, usa a data atual.
+
+    Returns:
+        dict: Dicionário com média, último valor e quantidade de meses analisados.
+    """
+    if not data_inicial:
+        data_inicial = (datetime.datetime.now().date() - relativedelta(months=meses)).replace(day=1)
+    elif isinstance(data_inicial, str):
+        data_inicial = datetime.datetime.strptime(data_inicial, '%Y-%m-%d')
+
+    if not data_final:
+        data_final = datetime.datetime.now().date()
+    elif isinstance(data_final, str):
+        data_final = datetime.datetime.strptime(data_final, '%Y-%m-%d')
+
+    data_inicial_str = data_inicial.strftime('%d/%m/%Y')
+    data_final_str = data_final.strftime('%d/%m/%Y')
+    
+    url = url_api_bcb.format(cod_serie=cod_serie) + f"&dataInicial={data_inicial_str}&dataFinal={data_final_str}"
+    df = pd.read_json(url)
+    df['data'] = pd.to_datetime.datetime(df['data'], format='%d/%m/%Y').dt.date
+    df = df.sort_values('data')
+
+    return {
+        "media": df['valor'].mean().round(2),
+        "ultimo_valor": df['valor'].iloc[-1],
+        "meses": meses,
+    }
+
 def calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aporte_mensal, periodos_anos=None, periodos_meses=None, data_inicio=None):
     # # Definição das informações utilizadas para calcular juros compostos
     # valor_inicial = 0
@@ -78,9 +159,15 @@ st.markdown(f"## Insira as informações abaixo para realizar o cálculo")
 valor_inicial = st.number_input("Saldo Inicial:", value=None, placeholder="Insira o valor inicial que você já possui...")
 aportes = st.number_input("Aplicações mensais:", value=0, placeholder="Insira o valor que você pretende investir todo mês...")
 periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, max_value=100, step=1, placeholder="Insira por quantos anos você pretende investir...")
-taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=None, placeholder="Insira a taxa de juros anual dos seus investimentos...")
+try:
+	ipca_periodo = get_bcb_acumulado(endpoints_bcb['ipca_mensal'], meses = periodo_anos * 12).get('acumulado')
+	selic_periodo = get_bcb(endpoints_bcb['selic_meta'], meses = periodo_anos * 12).get('media')
+except:
+	ipca_periodo = None
+	selic_periodo = None
+taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=selic_periodo, placeholder=f"Insira a taxa de juros anual esperada. Ex: {selic_periodo:.2f} (Selic atual)")
 data_inicio = st.date_input("Data de início:", (datetime.datetime.now(pytz.timezone('America/Sao_Paulo')) + relativedelta(months=1)).date().replace(day=1))
-inflacao_ano = st.number_input("Inflação anual esperada (opcional):", value=None, placeholder="Insira a inflação média anual esperada para o período [opcional]...")
+inflacao_ano = st.number_input("Inflação anual esperada (opcional):", value=ipca_periodo, placeholder="Insira a inflação média anual esperada para o período [opcional]...")
 
 if valor_inicial and periodo_anos and taxa_juros_ano:
     # Realiza o calculo dos juros compostos

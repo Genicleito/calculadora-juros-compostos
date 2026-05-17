@@ -134,7 +134,7 @@ def calculadora_juros_compostos(valor_inicial, taxa_juros_ano, aporte_mensal, pe
 @st.cache_data
 def obter_taxas_juros():
 	try:
-		ipca_10anos = get_bcb_acumulado(endpoints_bcb['ipca_mensal'], meses = 120).get('acumulado')
+		ipca_10anos = get_bcb(endpoints_bcb['ipca_acumulado'], meses = 120)
 		selic = get_bcb(endpoints_bcb['selic_meta'], meses = 120) # Selic dos últimos 10 anos (máximo)
 	except Exception as e:
 		print(f"Falha ao obter informações do BCB: {e}")
@@ -147,10 +147,10 @@ def obter_taxas_juros():
 selic, ipca_10anos = obter_taxas_juros()
 
 if selic and ipca_10anos:
-	col1, col2, _ = st.columns([1, 1, 2])
+	col1, col2, col3 = st.columns([1, 1, 1])
 	st.metric("Selic atual", value=f"{selic.get('ultimo_valor'):.2f}%")
-	st.metric("IPCA acumulado (10 anos)", value=f"{ipca_10anos.get('acumulado'):.2f}%")
-	st.metric("IPCA acumulado (12 meses)", value=f"{ipca_10anos.get('acumulado_12meses'):.2f}%")
+	st.metric("Inflação (IPCA) acumulada 12 meses", value=f"{ipca_10anos.get('ultimo_valor'):.2f}%")
+	st.metric("IPCA acumulado médio 12 meses (últimos 10 anos)", value=f"{ipca_10anos.get('media'):.2f}%")
 
 # @st.cache_data
 # def install_requirements():
@@ -188,7 +188,7 @@ aportes = st.number_input("Aplicações mensais:", value=0, placeholder="Insira 
 periodo_anos = st.number_input("Tempo de investimento (em anos):", min_value=1, max_value=100, step=1, placeholder="Insira por quantos anos você pretende investir...")
 taxa_juros_ano = st.number_input("Taxa de juros anual (%):", value=selic.get('media'), placeholder=f"Insira a taxa de juros anual esperada." + f"Ex: {selic.get('ultimo_valor'):.2f} (Selic atual)" if selic.get('ultimo_valor') else "")
 data_inicio = st.date_input("Data de início:", (datetime.datetime.now(pytz.timezone('America/Sao_Paulo')) + relativedelta(months=1)).date().replace(day=1))
-inflacao_ano = st.number_input("Inflação anual esperada (opcional):", value=ipca_10anos, placeholder="Insira a inflação média anual esperada para o período [opcional]...")
+inflacao_ano = st.number_input("Inflação (IPCA) anual esperada (opcional):", value=ipca_10anos.get('media'), placeholder="Insira a inflação média anual esperada para o período [opcional]...")
 
 if valor_inicial and periodo_anos and taxa_juros_ano:
     # Realiza o calculo dos juros compostos

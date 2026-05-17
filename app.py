@@ -30,61 +30,62 @@ def get_bcb_acumulado(cod_serie: int, meses: int = 12, data_inicial: str=None, d
     Returns:
         dict: Dicionário com o valor acumulado no período {'acumulado': valor}.
     """
-    if not data_inicial:
-        data_inicial = (datetime.datetime.now().date() - relativedelta(months=meses)).replace(day=1)
-    elif isinstance(data_inicial, str):
-        data_inicial = datetime.datetime.strptime(data_inicial, '%Y-%m-%d')
+	if not data_inicial:
+		data_inicial = (datetime.datetime.now().date() - relativedelta(months=meses)).replace(day=1)
+	elif isinstance(data_inicial, str):
+		data_inicial = datetime.datetime.strptime(data_inicial, '%Y-%m-%d')
 
-    if not data_final:
-        data_final = datetime.datetime.now().date()
-    elif isinstance(data_final, str):
-        data_final = datetime.datetime.strptime(data_final, '%Y-%m-%d')
+	if not data_final:
+		data_final = datetime.datetime.now().date()
+	elif isinstance(data_final, str):
+		data_final = datetime.datetime.strptime(data_final, '%Y-%m-%d')
 
-    data_inicial_str = data_inicial.strftime('%d/%m/%Y')
-    data_final_str = data_final.strftime('%d/%m/%Y')
+	data_inicial_str = data_inicial.strftime('%d/%m/%Y')
+	data_final_str = data_final.strftime('%d/%m/%Y')
     
-    url = url_api_bcb.format(cod_serie=cod_serie) + f"&dataInicial={data_inicial_str}&dataFinal={data_final_str}"
-    df = pd.read_json(url)
+	url = url_api_bcb.format(cod_serie=cod_serie) + f"&dataInicial={data_inicial_str}&dataFinal={data_final_str}"
+	df = pd.read_json(url)
 
-    df['fator'] = (df['valor'] / 100) + 1
-    fator_acumulado = df['fator'].prod()
-    acumulado = (fator_acumulado - 1) * 100
-    return {
-        "acumulado": acumulado,
-    }
+	df['fator'] = (df['valor'] / 100) + 1
+	fator_acumulado = df['fator'].prod()
+	acumulado = (fator_acumulado - 1) * 100
+
+	return {
+		"acumulado": acumulado,
+	}
 
 def get_bcb(cod_serie: int, meses: int = 12, data_inicial: str=None, data_final: str = None):
 	"""
-    Obtém estatísticas de uma série do Banco Central do Brasil (BCB) para um período.
+	Obtém estatísticas de uma série do Banco Central do Brasil (BCB) para um período.
+	
+	Args:
+		cod_serie (int): Código da série do BCB.
+		meses (int, opcional): Quantidade de meses do período. Default é 12.
+		data_inicial (str, opcional): Data inicial no formato 'YYYY-MM-DD'. Se não informado, calcula a partir de 'meses'.
+		data_final (str, opcional): Data final no formato 'YYYY-MM-DD'. Se não informado, usa a data atual.
+	
+	Returns:
+		dict: Dicionário com média, último valor e quantidade de meses analisados.
+	"""
+	if not data_inicial:
+		data_inicial = (datetime.datetime.now().date() - relativedelta(months=meses)).replace(day=1)
+	elif isinstance(data_inicial, str):
+		data_inicial = datetime.datetime.strptime(data_inicial, '%Y-%m-%d')
 
-    Args:
-        cod_serie (int): Código da série do BCB.
-        meses (int, opcional): Quantidade de meses do período. Default é 12.
-        data_inicial (str, opcional): Data inicial no formato 'YYYY-MM-DD'. Se não informado, calcula a partir de 'meses'.
-        data_final (str, opcional): Data final no formato 'YYYY-MM-DD'. Se não informado, usa a data atual.
+	if not data_final:
+		data_final = datetime.datetime.now().date()
+	elif isinstance(data_final, str):
+		data_final = datetime.datetime.strptime(data_final, '%Y-%m-%d')
 
-    Returns:
-        dict: Dicionário com média, último valor e quantidade de meses analisados.
-    """
-    if not data_inicial:
-        data_inicial = (datetime.datetime.now().date() - relativedelta(months=meses)).replace(day=1)
-    elif isinstance(data_inicial, str):
-        data_inicial = datetime.datetime.strptime(data_inicial, '%Y-%m-%d')
-
-    if not data_final:
-        data_final = datetime.datetime.now().date()
-    elif isinstance(data_final, str):
-        data_final = datetime.datetime.strptime(data_final, '%Y-%m-%d')
-
-    data_inicial_str = data_inicial.strftime('%d/%m/%Y')
-    data_final_str = data_final.strftime('%d/%m/%Y')
+	data_inicial_str = data_inicial.strftime('%d/%m/%Y')
+	data_final_str = data_final.strftime('%d/%m/%Y')
     
-    url = url_api_bcb.format(cod_serie=cod_serie) + f"&dataInicial={data_inicial_str}&dataFinal={data_final_str}"
-    df = pd.read_json(url)
-    df['data'] = pd.to_datetime.datetime(df['data'], format='%d/%m/%Y').dt.date
-    df = df.sort_values('data')
+	url = url_api_bcb.format(cod_serie=cod_serie) + f"&dataInicial={data_inicial_str}&dataFinal={data_final_str}"
+	df = pd.read_json(url)
+	df['data'] = pd.to_datetime.datetime(df['data'], format='%d/%m/%Y').dt.date
+	df = df.sort_values('data')
 
-    return {
+	return {
         "media": df['valor'].mean().round(2),
         "ultimo_valor": df['valor'].iloc[-1],
         "meses": meses,
